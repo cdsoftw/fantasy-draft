@@ -33,18 +33,18 @@ def space(num):
         
     return spaces
     
-def printPlayer(player):
-    print(player['RK'], '\t', player['TIERS'], '\t', player['PLAYER NAME'], space(22 - len(player['PLAYER NAME'])), player['POS'], '\t', player['TEAM'], '\t', player['BYE'], '\t', player['BEST'], '\t', player['WORST'], '\t', player['AVG.'], '\t', player['STD.DEV'])
+def printPlayer(player, inPositionMode, posStr):
+    print(player['RK'], '\t', player['TIERS'], '\t', player['PLAYER NAME'], space(25 - len(player['PLAYER NAME'])), player['POS'] if not inPositionMode else posStr + player['RK'], '\t', player['TEAM'], '\t', player['BYE'] if not inPositionMode else '\t', '\t', player['BEST'], '\t', player['WORST'], '\t', player['AVG.'], '\t', player['STD.DEV'])
     
 def printNext5(ranks):
     print('')
-    print('Rank\tPlayer\t\t\tPos\tTeam\tBye\tBest\tWorst\tAvg')
+    print('Rank\tTier\tPlayer\t\t\tPos\tTeam\tBye\tBest\tWorst\tAvg\tStd Dev')
     for i in range(5):
-        printPlayer(ranks[i])
+        printPlayer(ranks[i], False, "")
     print('')
         
-def printPos(ranks, pos, hasPositionFiles):
-    if hasPositionFiles:
+def printPos(ranks, pos, inPositionMode):
+    if inPositionMode:
         count = 1
         posIdx = 0
         
@@ -60,7 +60,7 @@ def printPos(ranks, pos, hasPositionFiles):
             posIdx = 5
         
         for rank in positionalRankings[posIdx]:
-                printPlayer(rank)
+                printPlayer(rank, inPositionMode, pos)
                 count += 1
                 if count > 5:
                     break
@@ -69,7 +69,7 @@ def printPos(ranks, pos, hasPositionFiles):
         count = 1
         for rank in ranks:
             if bool(re.match(pos + '\d{1,3}', rank['POS'])):
-                printPlayer(rank)
+                printPlayer(rank, inPositionMode, pos)
                 count += 1
             if count > 5:
                 break
@@ -80,7 +80,8 @@ def main(argv):
     if len(argv) < 2:
         exit('USAGE: python draft.py draftRankingsCSVfilePath [positionRankingsCSVfilePath1, positionRankingsCSVfilePath2...] (order expected is wr, rb, te, qb, dst/def, k')
         
-    hasPositionFiles = len(argv) < 3
+    overallMode = False
+    hasPositionFiles = len(argv) == 8
     if hasPositionFiles:
         for i in range(2, len(argv)):
             getPositionalRankings(argv[i], i - 2)
@@ -91,29 +92,29 @@ def main(argv):
     pick = input('Enter Pick #1, or a command (\'help\' for list of commands): ').lower()
     pickNum = 1
     
-    while 'done' != pick and 'quit' != pick:
+    while 'done' != pick and 'quit' != pick and 'q' != pick:
         if pick == 'wr':
-            printPos(rankings, 'WR', hasPositionFiles)
+            printPos(rankings, 'WR', hasPositionFiles ^ overallMode)
             printNext5(rankings)
         
         elif pick == 'rb':
-            printPos(rankings, 'RB', hasPositionFiles)
+            printPos(rankings, 'RB', hasPositionFiles ^ overallMode)
             printNext5(rankings)
             
         elif pick == 'te':
-            printPos(rankings, 'TE', hasPositionFiles)
+            printPos(rankings, 'TE', hasPositionFiles ^ overallMode)
             printNext5(rankings)
             
         elif pick == 'qb':
-            printPos(rankings, 'QB', hasPositionFiles)
+            printPos(rankings, 'QB', hasPositionFiles ^ overallMode)
             printNext5(rankings)
             
         elif pick == 'dst' or pick == 'def':
-            printPos(rankings, 'DST', hasPositionFiles)
+            printPos(rankings, 'DST', hasPositionFiles ^ overallMode)
             printNext5(rankings)
             
         elif pick == 'kicker' or pick == 'k':
-            printPos(rankings, 'K', hasPositionFiles)
+            printPos(rankings, 'K', hasPositionFiles ^ overallMode)
             printNext5(rankings)
             
         elif pick == 'all':
@@ -121,8 +122,11 @@ def main(argv):
             
         elif pick == 'help':
             print('Commands:\n\t[Player Name] - pick player\n\t[QB/RB/WR/TE/DST/DEF] - show next 5 players in that position\n\tall - print(names of next 5 players in rankings\n\tquit/done - exit')
+
+        elif pick == 'overall':
+            overallMode = not overallMode
             
-        else: # player picked
+        elif pick: # player picked (not empty string)
             names = [rank['PLAYER NAME'] for rank in rankings]
             for name in names:
                 if name and pick in name.lower():
