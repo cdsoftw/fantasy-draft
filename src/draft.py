@@ -38,7 +38,7 @@ def printPlayer(player, inPositionMode, posStr):
     
 def printNext5(ranks):
     print('')
-    print('Rank\tTier\tPlayer\t\t\tPos\tTeam\tBye\tBest\tWorst\tAvg\tStd Dev')
+    print('Rank\tTier\t Player\t\t\t    Pos\t\t Team\t Bye\t Best\t Worst\t Avg\t Std Dev')
     for i in range(5):
         printPlayer(ranks[i], False, "")
     print('')
