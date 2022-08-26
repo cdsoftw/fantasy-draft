@@ -34,7 +34,7 @@ def space(num):
     return spaces
     
 def printPlayer(player):
-    print(player['RK'], '\t', player['PLAYER NAME'], space(22 - len(player['PLAYER NAME'])), player['POS'], '\t', player['TEAM'], '\t', player['BYE WEEK'], '\t', player['BEST'], '\t', player['WORST'], '\t', player['AVG.'])
+    print(player['RK'], '\t', player['TIERS'], '\t', player['PLAYER NAME'], space(22 - len(player['PLAYER NAME'])), player['POS'], '\t', player['TEAM'], '\t', player['BYE'], '\t', player['BEST'], '\t', player['WORST'], '\t', player['AVG.'], '\t', player['STD.DEV'])
     
 def printNext5(ranks):
     print('')
