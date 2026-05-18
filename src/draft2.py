@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # +=========================================+
-# | @author Cole Dapprich, 2018-2020 (AMDG) |
+# | @author cdsoftw, 2018-2020 (AMDG) |
 # +=========================================+
 
 from sys import argv, exit
